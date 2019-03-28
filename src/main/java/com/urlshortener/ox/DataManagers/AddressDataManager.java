@@ -19,7 +19,7 @@ public class AddressDataManager {
         this.addressRepository = addressRepository;
     }
 
-    public Address saveWithHEX(Address address) {
+    /*public Address saveWithHEX(Address address) {
         address.setUrlID(addressRepository.getMAXID() + 1);
         address.setHEXvalue(Integer.toHexString(address.getUrlID()));
         StringBuilder tempHEXvalue = new StringBuilder(address.getHEXvalue());
@@ -34,14 +34,26 @@ public class AddressDataManager {
 
         addressRepository.save(address);
         return address;
+    }*/
+
+    public Address saveWithHEX(Address address){
+        address = addressRepository.save(address);
+        address.setHEXvalue(Integer.toHexString(address.getUrlID()));
+        return address;
     }
 
     public Address getURL(String shortURL) {
 
         int URLID = Integer.parseInt(shortURL, 16);
-        Optional<Address> address = addressRepository.findById(URLID);
+        Optional<Address> optionalAddress = addressRepository.findById(URLID);
+        if(optionalAddress.isPresent())
+        {
+            Address address = optionalAddress.get();
+            address.setHEXvalue(Integer.toHexString(address.getUrlID()));
+            return address;
+        }
 
-        return address.orElse(null);
+        return null;
     }
 
     public Iterable<Address> getAllURLs(){
