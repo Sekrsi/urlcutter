@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 
 public class OwnUserDetails implements UserDetails {
     private User user;
@@ -22,14 +22,17 @@ public class OwnUserDetails implements UserDetails {
         this.user = user;
     }
 
-    OwnUserDetails(User user) {
+    public OwnUserDetails(User user) {
         this.user = user;
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-       return user.getRole();
+        ArrayList<Role> roles = new ArrayList<>();
+        roles.add(user.getRole());
+
+        return roles;
     }
 
     public long getID(){

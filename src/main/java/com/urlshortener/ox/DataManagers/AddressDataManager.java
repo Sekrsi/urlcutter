@@ -3,9 +3,12 @@ package com.urlshortener.ox.DataManagers;
 
 import com.urlshortener.ox.Entities.Address;
 import com.urlshortener.ox.Entities.AddressRepository;
+import com.urlshortener.ox.Entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,28 +16,10 @@ public class AddressDataManager {
 
     private final AddressRepository addressRepository;
 
-
     @Autowired
     public AddressDataManager(AddressRepository addressRepository) {
         this.addressRepository = addressRepository;
     }
-
-    /*public Address saveWithHEX(Address address) {
-        address.setUrlID(addressRepository.getMAXID() + 1);
-        address.setHEXvalue(Integer.toHexString(address.getUrlID()));
-        StringBuilder tempHEXvalue = new StringBuilder(address.getHEXvalue());
-        int missingChars = (4 - tempHEXvalue.length());
-
-        if (missingChars != 0) {
-            for (int i = 0; i < missingChars; i++) {
-                tempHEXvalue.insert(0, "0");
-            }
-            address.setHEXvalue(tempHEXvalue.toString());
-        }
-
-        addressRepository.save(address);
-        return address;
-    }*/
 
     public Address saveWithHEX(Address address){
         address = addressRepository.save(address);
@@ -58,6 +43,10 @@ public class AddressDataManager {
 
     public Iterable<Address> getAllURLs(){
         return addressRepository.findAll();
+    }
+
+    public Iterable<Address> getUserAddresses(User user){
+        return addressRepository.userAddresses(user.getId());
     }
 
 

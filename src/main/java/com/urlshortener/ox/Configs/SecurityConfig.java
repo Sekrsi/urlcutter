@@ -1,8 +1,11 @@
 
 package com.urlshortener.ox.Configs;
 
+        import com.urlshortener.ox.Services.OwnUserDetailService;
         import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.context.annotation.Bean;
         import org.springframework.context.annotation.Configuration;
+        import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
         import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
         import org.springframework.security.config.annotation.web.builders.HttpSecurity;
         import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,23 +20,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
-    BCryptPasswordEncoder bCryptPasswordEncoder() {
+    @Autowired
+    OwnUserDetailService ownUserDetailService;
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider
+                = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(ownUserDetailService);
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
+
+
+        return authProvider;
+    }
+
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        auth
-                .jdbcAuthentication()
-                .dataSource(dataSource)
-                .usersByUsernameQuery(
-                        "select email, password, enabled from user " +
-                                "where email=?")
-                .authoritiesByUsernameQuery(
-                        "select email, role from user " +
-                                "where email=?")
-                .passwordEncoder(bCryptPasswordEncoder());
+        auth.authenticationProvider(authenticationProvider());
+
     }
 
     @Override
@@ -42,16 +54,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/user").hasRole("USER")
-                .antMatchers("/user/**").hasRole("USER")
-                .antMatchers("/").permitAll()
-           //     .antMatchers("").permitAll()
+                .antMatchers("/**").hasRole("USER")
+          //      .antMatchers("/user/**").hasRole("USER")
+            //    .antMatchers("/user").hasRole("USER")
                 .and()
                 .formLogin().permitAll()
                 .and()
                 .logout().permitAll()
-                .and()
-                .csrf().disable()
+            //    .and()
+            //    .csrf().disable()
         ;
     }
 

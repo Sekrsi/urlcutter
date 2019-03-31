@@ -25,11 +25,12 @@ public class MainController {
         return addressDataManager.getAllURLs();
     }
 
-    @PostMapping({"/", ""})
+    @PostMapping("/")
     @ResponseBody
     public Address cutURL(@RequestBody Address address) {
         return addressDataManager.saveWithHEX(address);
     }
+
 
     @GetMapping("/{shortURL}")
     @ResponseBody

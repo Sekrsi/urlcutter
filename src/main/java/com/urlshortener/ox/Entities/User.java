@@ -1,6 +1,10 @@
 package com.urlshortener.ox.Entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Set;
@@ -23,18 +27,17 @@ public class User {
   private String email;
 
   @Column
+  @JsonIgnore
   private String password;
 
-  @OneToMany(mappedBy = "role")
-  private Set<Role> role;
+  @ManyToOne(targetEntity = Role.class)
+  @JoinColumn(name="ROLE",insertable = false,updatable = false)
+  @JsonManagedReference
+  private Role role;
 
-  public Set<Role> getRole() {
-    return role;
-  }
-
-  public void setRole(Set<Role> role) {
-    this.role = role;
-  }
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+  @JsonBackReference
+  private Set<Address> addresses;
 
   @Column
   private boolean enabled;
@@ -42,6 +45,42 @@ public class User {
   @Column
   private boolean activated;
 
+  public User(String username, @Email String email, String password, Role role, Set<Address> addresses, boolean enabled, boolean activated) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+    this.addresses = addresses;
+    this.enabled = enabled;
+    this.activated = activated;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public boolean isActivated() {
+    return activated;
+  }
+
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
+  public Set<Address> getAddresses() {
+    return addresses;
+  }
+
+  public void setAddresses(Set<Address> addresses) {
+    this.addresses = addresses;
+  }
+
+  public User() {
+  }
 
   public long getId() {
     return id;
@@ -51,7 +90,6 @@ public class User {
     this.id = id;
   }
 
-
   public String getUsername() {
     return username;
   }
@@ -60,7 +98,6 @@ public class User {
     this.username = username;
   }
 
-
   public String getEmail() {
     return email;
   }
@@ -68,7 +105,6 @@ public class User {
   public void setEmail(String email) {
     this.email = email;
   }
-
 
   public String getPassword() {
     return password;
