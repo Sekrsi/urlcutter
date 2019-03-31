@@ -9,11 +9,6 @@ import java.util.Optional;
 @Repository
 public interface AddressRepository extends CrudRepository<Address,Integer> {
 
-
-
-    @Query("SELECT A from Address A where A.user.id=?1")
-    Iterable<Address> userAddresses(Long user);
-
-
+    Iterable<Address> findByUserID(Long user);
 
 }

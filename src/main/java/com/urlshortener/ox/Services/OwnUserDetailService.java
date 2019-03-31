@@ -33,33 +33,24 @@ public class OwnUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         if(isEmailValid(username)){
-            System.out.println("Email probably valid");
             User user = userRepository.findByEmail(username);
             if(user == null) {
-                System.out.println("looking by username");
                 user = userRepository.findByUsername(username);
                 if (user == null) {
-                    System.out.println("No found " + username);
                     throw new UsernameNotFoundException(username);
                 }
                 else {
-                    System.out.println("Found " + username);
                     return new OwnUserDetails(user);
                 }
-
             }else {
                 return new OwnUserDetails(user);
             }
        }else {
 
-            System.out.println("Email invalid");
-            System.out.println("looking by username");
             User user = userRepository.findByUsername(username);
             if (user == null) {
-                System.out.println("No found " + username);
                 throw new UsernameNotFoundException(username);
             }
-            System.out.println("Found user! " + username);
             return new OwnUserDetails(user);
 
         }

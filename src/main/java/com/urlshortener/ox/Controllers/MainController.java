@@ -1,7 +1,8 @@
 package com.urlshortener.ox.Controllers;
 
 
-import com.urlshortener.ox.DataManagers.AddressDataManager;
+import com.urlshortener.ox.POJOS.AddressPOJO;
+import com.urlshortener.ox.Services.AddressService;
 import com.urlshortener.ox.Entities.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,31 +12,31 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/cutter")
 public class MainController {
 
-    private final AddressDataManager addressDataManager;
+    private final AddressService addressService;
 
     @Autowired
-    public MainController(AddressDataManager addressDataManager) {
-        this.addressDataManager = addressDataManager;
+    public MainController(AddressService addressService) {
+        this.addressService = addressService;
     }
 
 
-    @GetMapping({"/", ""})
+    @GetMapping("")
     @ResponseBody
     public Iterable<Address> getAllURLs(){
-        return addressDataManager.getAllURLs();
+        return addressService.getAllURLs();
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @ResponseBody
-    public Address cutURL(@RequestBody Address address) {
-        return addressDataManager.saveWithHEX(address);
+    public Address addAddress(@RequestBody AddressPOJO address) {
+        return addressService.addAddress(address);
     }
 
 
     @GetMapping("/{shortURL}")
     @ResponseBody
     public Address getURL(@PathVariable String shortURL) {
-        return addressDataManager.getURL(shortURL);
+        return addressService.getURL(shortURL);
     }
 
 

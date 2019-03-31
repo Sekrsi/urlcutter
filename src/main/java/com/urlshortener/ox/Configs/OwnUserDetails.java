@@ -36,7 +36,7 @@ public class OwnUserDetails implements UserDetails {
     }
 
     public long getID(){
-        return user.getId();
+        return user.getID();
     }
 
     @Override

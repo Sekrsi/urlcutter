@@ -2,7 +2,6 @@
 package com.urlshortener.ox.Configs;
 
         import com.urlshortener.ox.Services.OwnUserDetailService;
-        import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.context.annotation.Bean;
         import org.springframework.context.annotation.Configuration;
         import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,17 +10,21 @@ package com.urlshortener.ox.Configs;
         import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
         import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
         import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-        import javax.sql.DataSource;
+        import org.springframework.web.bind.annotation.GetMapping;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    DataSource dataSource;
 
-    @Autowired
+
+    private final
     OwnUserDetailService ownUserDetailService;
+
+    public SecurityConfig(OwnUserDetailService ownUserDetailService) {
+        this.ownUserDetailService = ownUserDetailService;
+    }
+
 
     private BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -34,8 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(ownUserDetailService);
         authProvider.setPasswordEncoder(bCryptPasswordEncoder());
-
-
         return authProvider;
     }
 
@@ -54,15 +55,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic()
                 .and()
                 .authorizeRequests()
+                .antMatchers("/cutter").hasRole("ADMIN")
+                .antMatchers("/cutter/**").permitAll()
+                .antMatchers("/user").hasRole("USER")
+                .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/**").hasRole("USER")
-          //      .antMatchers("/user/**").hasRole("USER")
-            //    .antMatchers("/user").hasRole("USER")
                 .and()
                 .formLogin().permitAll()
                 .and()
                 .logout().permitAll()
-            //    .and()
-            //    .csrf().disable()
+                .and()
+                .csrf().disable()
         ;
     }
 

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
+import javax.validation.constraints.*;
 import java.util.Set;
 
 
@@ -17,17 +17,22 @@ public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY )
   @Column
-  private long id;
+  private long ID;
 
   @Column
+  @NotBlank
+  @Size(min = 4, max = 30)
   private String username;
 
   @Column
   @Email
+  @NotNull
   private String email;
 
   @Column
   @JsonIgnore
+  @NotBlank
+  @Size(min = 8, max = 30)
   private String password;
 
   @ManyToOne(targetEntity = Role.class)
@@ -82,12 +87,12 @@ public class User {
   public User() {
   }
 
-  public long getId() {
-    return id;
+  public long getID() {
+    return ID;
   }
 
-  public void setId(long id) {
-    this.id = id;
+  public void setID(long ID) {
+    this.ID = ID;
   }
 
   public String getUsername() {

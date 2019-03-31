@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "website", schema = "urlshortener")
@@ -25,24 +26,25 @@ public class Address {
 
     @Column(name = "url")
     private String url;
-    @Column(name = "HEXvalue")
-    private String HEXvalue;
+
+    @Column
+    private boolean active = true;
+
+    @Column
+    private Date setupDATE;
+
+    @Column
+    private Date expDATE;
 
     public Address() {
     }
 
-    public Address(User user, String url, String HEXvalue) {
+    public Address(User user, String url, boolean active, Date setupDATE, Date expDATE) {
         this.user = user;
         this.url = url;
-        this.HEXvalue = HEXvalue;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+        this.active = active;
+        this.setupDATE = setupDATE;
+        this.expDATE = expDATE;
     }
 
     public Integer getUrlID() {
@@ -53,6 +55,14 @@ public class Address {
         this.urlID = urlID;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -61,12 +71,27 @@ public class Address {
         this.url = url;
     }
 
-    public String getHEXvalue() {
-        return HEXvalue;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setHEXvalue(String HEXvalue) {
-        this.HEXvalue = HEXvalue;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
+    public Date getSetupDATE() {
+        return setupDATE;
+    }
+
+    public void setSetupDATE(Date setupDATE) {
+        this.setupDATE = setupDATE;
+    }
+
+    public Date getExpDATE() {
+        return expDATE;
+    }
+
+    public void setExpDATE(Date expDATE) {
+        this.expDATE = expDATE;
+    }
 }

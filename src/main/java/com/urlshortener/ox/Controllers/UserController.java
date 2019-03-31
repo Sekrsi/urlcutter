@@ -2,15 +2,13 @@ package com.urlshortener.ox.Controllers;
 
 
 import com.urlshortener.ox.Configs.OwnUserDetails;
-import com.urlshortener.ox.DataManagers.AddressDataManager;
+import com.urlshortener.ox.POJOS.AddressPOJO;
+import com.urlshortener.ox.Services.AddressService;
 import com.urlshortener.ox.Entities.Address;
 import com.urlshortener.ox.Entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController()
@@ -18,18 +16,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    AddressDataManager addressDataManager;
+    AddressService addressService;
 
     @GetMapping("")
     @ResponseBody
     public User userInfo() {
-        OwnUserDetails ownUserDetails = (OwnUserDetails)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
 
-        User user = ownUserDetails.getUser();
-        System.out.println(user.getEmail() + " " + user.getUsername() + " " + user.getRole().getAuthority());
-        return user;
-    }
+
+            OwnUserDetails ownUserDetails = (OwnUserDetails)
+                    SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            User user = ownUserDetails.getUser();
+            System.out.println(user.getEmail() + " " + user.getUsername() + " " + user.getRole().getAuthority());
+            return user;
+        }catch (Exception e){
+            return null;
+        }
+        }
 
     @GetMapping("/addresses")
     public Iterable<Address> userAddresses(){
@@ -38,9 +42,19 @@ public class UserController {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User user = ownUserDetails.getUser();
-        return addressDataManager.getUserAddresses(user);
+        return addressService.getUserAddresses(user);
     }
 
+    @PostMapping("/addresses")
+    public Address addAddress(@RequestBody AddressPOJO address){
+        return addressService.addAddress(address);
+    }
+
+    @DeleteMapping("/addresses/{id}")
+    public String deleteAddress(@PathVariable Integer id){
+        return addressService.deleteAddress(id);
+
+    }
 
 
 }
