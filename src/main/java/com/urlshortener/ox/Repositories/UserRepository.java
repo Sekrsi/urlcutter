@@ -1,6 +1,6 @@
-package com.urlshortener.ox.Entities;
+package com.urlshortener.ox.Repositories;
 
-import org.springframework.data.jpa.repository.Query;
+import com.urlshortener.ox.Entities.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

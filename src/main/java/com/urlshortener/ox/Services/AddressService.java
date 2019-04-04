@@ -3,7 +3,7 @@ package com.urlshortener.ox.Services;
 
 import com.urlshortener.ox.Configs.OwnUserDetails;
 import com.urlshortener.ox.Entities.Address;
-import com.urlshortener.ox.Entities.AddressRepository;
+import com.urlshortener.ox.Repositories.AddressRepository;
 import com.urlshortener.ox.Entities.User;
 import com.urlshortener.ox.POJOS.AddressPOJO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,8 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
 
+    private final OwnUserDetailService ownUserDetailService;
+
     private Date expDate(int days){
         System.out.println("Actual date: " + Calendar.getInstance().getTime());
         Calendar cal = Calendar.getInstance();
@@ -30,7 +32,7 @@ public class AddressService {
         return expiryDate;
     }
 
-    private Date setupDATE(){
+    private Date nowDATE(){
         Calendar cal = Calendar.getInstance();
         return cal.getTime();
     }
@@ -40,7 +42,7 @@ public class AddressService {
         address.setUrl(addressPOJO.getUrl());
         address.setUser(user);
         address.setExpDATE(expDate(180));
-        address.setSetupDATE(setupDATE());
+        address.setSetupDATE(nowDATE());
         address = addressRepository.save(address);
         return address;
     }
@@ -49,28 +51,27 @@ public class AddressService {
         Address address = new Address();
         address.setUrl(addressPOJO.getUrl());
         address.setExpDATE(expDate(30));
-        address.setSetupDATE(setupDATE());
+        address.setSetupDATE(nowDATE());
         address = addressRepository.save(address);
         return address;
     }
 
 
     @Autowired
-    public AddressService(AddressRepository addressRepository) {
+    public AddressService(AddressRepository addressRepository, OwnUserDetailService ownUserDetailService) {
         this.addressRepository = addressRepository;
+        this.ownUserDetailService = ownUserDetailService;
     }
 
     public Address addAddress(AddressPOJO addressPOJO) {
-        try {
-            OwnUserDetails ownUserDetails = (OwnUserDetails)
-                    SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User user = ownUserDetails.getUser();
+          Optional<OwnUserDetails> ownUserDetails = Optional.ofNullable((OwnUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        if(ownUserDetails.isPresent()){
+            User user = ownUserDetails.get().getUser();
             return addAddressWithUser(addressPOJO,user);
         }
-        catch (Exception e){
+        else {
             return addAddressWithoutUser(addressPOJO);
         }
-
 
     }
 
@@ -78,12 +79,28 @@ public class AddressService {
 
         int URLID = Integer.parseInt(shortURL, 16);
         Optional<Address> optionalAddress = addressRepository.findById(URLID);
-        return optionalAddress.orElse(null);
+        if(optionalAddress.isPresent()){
+            Address address = optionalAddress.get();
+            if(address.isActive() && address.getExpDATE().compareTo(nowDATE())<0){
+                return address;
+            }
+            else if(!address.isActive()){
+                return null;
+            }
+            else {
+                address.setActive(false);
+                addressRepository.save(address);
+                return null;
+            }
+        }
+        return null;
 
     }
 
     public Iterable<Address> getAllURLs(){
         return addressRepository.findAll();
+        // todo
+        // check if address is active and not expired
     }
 
     public Iterable<Address> getUserAddresses(User user){

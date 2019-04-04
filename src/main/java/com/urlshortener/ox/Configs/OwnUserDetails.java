@@ -26,7 +26,6 @@ public class OwnUserDetails implements UserDetails {
         this.user = user;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<Role> roles = new ArrayList<>();

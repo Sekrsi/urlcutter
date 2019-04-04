@@ -23,7 +23,6 @@ public class Address {
     @JsonManagedReference
     private User user;
 
-
     @Column(name = "url")
     private String url;
 

@@ -20,11 +20,11 @@ public class MainController {
     }
 
 
-    @GetMapping("")
+   /* @GetMapping("")
     @ResponseBody
     public Iterable<Address> getAllURLs(){
         return addressService.getAllURLs();
-    }
+    }*/
 
     @PostMapping("")
     @ResponseBody

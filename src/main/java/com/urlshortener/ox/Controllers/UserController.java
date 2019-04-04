@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
+    private final
     AddressService addressService;
+
+    public UserController(AddressService addressService) {
+        this.addressService = addressService;
+    }
 
     @GetMapping("")
     @ResponseBody
@@ -56,5 +60,10 @@ public class UserController {
 
     }
 
+    @PutMapping("/addresses")
+    public Address updateAddress(@RequestBody Address address){
+
+        return address;
+    }
 
 }
