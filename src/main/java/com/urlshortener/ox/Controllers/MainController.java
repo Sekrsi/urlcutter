@@ -22,8 +22,8 @@ public class MainController {
 
    /* @GetMapping("")
     @ResponseBody
-    public Iterable<Address> getAllURLs(){
-        return addressService.getAllURLs();
+    public Iterable<Address> getAllActivesURLs(){
+        return addressService.getAllActivesURLs();
     }*/
 
     @PostMapping("")

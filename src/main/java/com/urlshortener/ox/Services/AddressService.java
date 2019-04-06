@@ -12,9 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AddressService {
@@ -97,46 +95,51 @@ public class AddressService {
 
     }
 
-    public Iterable<Address> getAllURLs(){
-        return addressRepository.findAll();
-        // todo
-        // check if address is active and not expired
+    public Iterable<Address> getAllActivesURLs(){
+        Iterable<Address> addresses = addressRepository.findAll();
+        HashSet<Address> addresses1 = new HashSet<>();
+        for(Address address: addresses){
+            if(address.isActive() && address.getExpDATE().compareTo(nowDATE())<0){
+                addresses1.add(address);
+            }
+            else if (address.isActive()) {
+                    address.setActive(false);
+                    addressRepository.save(address);
+
+            }
+        }
+        return (addresses1);
     }
 
     public Iterable<Address> getUserAddresses(User user){
         return addressRepository.findByUserID(user.getID());
     }
 
-    public String deleteAddress(Integer id){
-        Optional<Address> address = addressRepository.findById(id);
-        if(address.isPresent()){
-            System.out.println("Element exist");
-            try {
-                OwnUserDetails ownUserDetails = (OwnUserDetails)
-                        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                User user = ownUserDetails.getUser();
-
+    public String deleteAddress(Integer id) {
+        Optional<OwnUserDetails> ownUserDetails = Optional.ofNullable((OwnUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        if (ownUserDetails.isPresent()) {
+            User user = ownUserDetails.get().getUser();
+            Optional<Address> address = addressRepository.findById(id);
+            System.out.println("User logged");
+            if(address.isPresent()) {
                 Address address1 = address.get();
-                System.out.println("User logged");
-                if(address1.getUser()!=null && address1.getUser().getUsername().equals(user.getUsername())) {
+                if (address1.getUser() != null && address1.getUser().getUsername().equals(user.getUsername())) {
                     address1.setActive(false);
                     addressRepository.save(address1);
                     System.out.println("Deleted Element");
                     return "Deleted element";
-                }
-                else {
+                } else {
                     System.out.println("Wrong user");
-                    return "You have no permissions to delete element";
+                    return "You have no permissions to delete the element";
                 }
             }
-            catch (ClassCastException e)
-            {
-                e.printStackTrace();
-                System.out.println("Exception");
-                return "You are not logged";
+            else {
+                return "No address";
             }
         }
-        return "Element no exist";
-    }
+        else {
+            return "You are not logged";
+        }
 
+    }
 }

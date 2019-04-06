@@ -10,13 +10,10 @@ package com.urlshortener.ox.Configs;
         import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
         import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
         import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-        import org.springframework.web.bind.annotation.GetMapping;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-
 
     private final
     OwnUserDetailService ownUserDetailService;
@@ -25,11 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.ownUserDetailService = ownUserDetailService;
     }
 
-
     private BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -39,8 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authProvider;
     }
-
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)

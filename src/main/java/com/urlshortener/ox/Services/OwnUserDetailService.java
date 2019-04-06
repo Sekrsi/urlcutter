@@ -5,13 +5,12 @@ import com.urlshortener.ox.Configs.OwnUserDetails;
 import com.urlshortener.ox.Entities.User;
 import com.urlshortener.ox.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+
 import java.util.regex.Pattern;
 
 
