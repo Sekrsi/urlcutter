@@ -1,4 +1,4 @@
-package com.urlshortener.ox.Configs;
+package com.urlshortener.Configs;
 
 
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,7 @@
 
-package com.urlshortener.ox.Configs;
+package com.urlshortener.Configs;
 
-        import com.urlshortener.ox.Services.OwnUserDetailService;
+        import com.urlshortener.Services.OwnUserDetailService;
         import org.springframework.context.annotation.Bean;
         import org.springframework.context.annotation.Configuration;
         import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
-            throws Exception {
+            {
         auth.authenticationProvider(authenticationProvider());
 
     }

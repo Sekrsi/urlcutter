@@ -1,8 +1,8 @@
-package com.urlshortener.ox.Configs;
+package com.urlshortener.Configs;
 
 
-import com.urlshortener.ox.Entities.Role;
-import com.urlshortener.ox.Entities.User;
+import com.urlshortener.Entities.Role;
+import com.urlshortener.Entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

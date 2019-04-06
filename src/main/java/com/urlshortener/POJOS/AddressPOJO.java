@@ -1,4 +1,4 @@
-package com.urlshortener.ox.POJOS;
+package com.urlshortener.POJOS;
 
 public class AddressPOJO {
 

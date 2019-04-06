@@ -1,11 +1,8 @@
-package com.urlshortener.ox.Repositories;
+package com.urlshortener.Repositories;
 
-import com.urlshortener.ox.Entities.Address;
-import org.springframework.data.jpa.repository.Query;
+import com.urlshortener.Entities.Address;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends CrudRepository<Address,Integer> {

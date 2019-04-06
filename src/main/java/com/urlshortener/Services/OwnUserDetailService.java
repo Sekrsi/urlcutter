@@ -1,9 +1,9 @@
-package com.urlshortener.ox.Services;
+package com.urlshortener.Services;
 
 
-import com.urlshortener.ox.Configs.OwnUserDetails;
-import com.urlshortener.ox.Entities.User;
-import com.urlshortener.ox.Repositories.UserRepository;
+import com.urlshortener.Configs.OwnUserDetails;
+import com.urlshortener.Entities.User;
+import com.urlshortener.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

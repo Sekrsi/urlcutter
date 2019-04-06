@@ -1,9 +1,9 @@
-package com.urlshortener.ox.Controllers;
+package com.urlshortener.Controllers;
 
 
-import com.urlshortener.ox.POJOS.AddressPOJO;
-import com.urlshortener.ox.Services.AddressService;
-import com.urlshortener.ox.Entities.Address;
+import com.urlshortener.Entities.Address;
+import com.urlshortener.POJOS.AddressPOJO;
+import com.urlshortener.Services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

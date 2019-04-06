@@ -1,12 +1,11 @@
-package com.urlshortener.ox.Controllers;
+package com.urlshortener.Controllers;
 
 
-import com.urlshortener.ox.Configs.OwnUserDetails;
-import com.urlshortener.ox.POJOS.AddressPOJO;
-import com.urlshortener.ox.Services.AddressService;
-import com.urlshortener.ox.Entities.Address;
-import com.urlshortener.ox.Entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.urlshortener.Configs.OwnUserDetails;
+import com.urlshortener.POJOS.AddressPOJO;
+import com.urlshortener.Services.AddressService;
+import com.urlshortener.Entities.Address;
+import com.urlshortener.Entities.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 

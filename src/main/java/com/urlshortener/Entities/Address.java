@@ -1,7 +1,6 @@
-package com.urlshortener.ox.Entities;
+package com.urlshortener.Entities;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
