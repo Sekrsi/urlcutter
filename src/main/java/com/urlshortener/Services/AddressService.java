@@ -62,35 +62,44 @@ public class AddressService {
     }
 
     public Address addAddress(AddressPOJO addressPOJO) {
-          Optional<OwnUserDetails> ownUserDetails = Optional.ofNullable((OwnUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(ownUserDetails.isPresent()){
-            User user = ownUserDetails.get().getUser();
-            return addAddressWithUser(addressPOJO,user);
-        }
-        else {
+        try {
+            Optional<OwnUserDetails> ownUserDetails = Optional.ofNullable((OwnUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            if (ownUserDetails.isPresent()) {
+                User user = ownUserDetails.get().getUser();
+                return addAddressWithUser(addressPOJO, user);
+            } else {
+                return addAddressWithoutUser(addressPOJO);
+            }
+
+        }catch (ClassCastException e){
             return addAddressWithoutUser(addressPOJO);
         }
-
     }
 
     public Address getURL(String shortURL) {
 
         int URLID = Integer.parseInt(shortURL, 16);
+        System.out.println("Poszukiwany adres: " + URLID);
         Optional<Address> optionalAddress = addressRepository.findById(URLID);
         if(optionalAddress.isPresent()){
+            System.out.println("Odnaleziono adres w bazie");
             Address address = optionalAddress.get();
-            if(address.isActive() && address.getExpDATE().compareTo(nowDATE())<0){
+            if(address.isActive() && address.getExpDATE().compareTo(nowDATE())>0){
+                System.out.println("Aktywny, Nie wygasły");
                 return address;
             }
             else if(!address.isActive()){
+                System.out.println("Nie aktywny");
                 return null;
             }
             else {
+                System.out.println("Wygasły");
                 address.setActive(false);
                 addressRepository.save(address);
                 return null;
             }
         }
+        System.out.println("Nie odnaleziono w bazie");
         return null;
 
     }

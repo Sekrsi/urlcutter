@@ -1,0 +1,21 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+
+    <title>przekierowanie</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+
+<script th:inline="javascript">
+    var message = [[${address}]];
+    console.log(message);
+    document.getElementsByTagName("META")[0].httpEquiv = "refresh";
+    document.getElementsByTagName("META")[0].content = "0; url=" + message ;
+</script>
+
+
+</body>
+</html>
