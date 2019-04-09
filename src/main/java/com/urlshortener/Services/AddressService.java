@@ -3,16 +3,20 @@ package com.urlshortener.Services;
 
 import com.urlshortener.Configs.OwnUserDetails;
 import com.urlshortener.Entities.Address;
+import com.urlshortener.Entities.User;
 import com.urlshortener.POJOS.AddressPOJO;
 import com.urlshortener.Repositories.AddressRepository;
-import com.urlshortener.Entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
 
 @Service
 public class AddressService {
@@ -21,21 +25,35 @@ public class AddressService {
 
     private final OwnUserDetailService ownUserDetailService;
 
-    private Date expDate(int days){
+    @Autowired
+    public AddressService(AddressRepository addressRepository, OwnUserDetailService ownUserDetailService) {
+        this.addressRepository = addressRepository;
+        this.ownUserDetailService = ownUserDetailService;
+    }
+
+    private Date expDate(int days) {
         System.out.println("Actual date: " + Calendar.getInstance().getTime());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, days); // to get previous year add 1
         Date expiryDate = cal.getTime();
-        System.out.println("Exp date: " +expiryDate);
+        System.out.println("Exp date: " + expiryDate);
         return expiryDate;
     }
 
-    private Date nowDATE(){
+    private Date nowDATE() {
         Calendar cal = Calendar.getInstance();
         return cal.getTime();
     }
 
-    private Address addAddressWithUser(AddressPOJO addressPOJO, User user){
+    private Optional<User> loggedUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!(auth instanceof AnonymousAuthenticationToken)){
+            return Optional.of((User)auth.getPrincipal());
+        } else
+            return Optional.empty();
+    }
+
+    private Address addAddressWithUser(AddressPOJO addressPOJO, User user) {
         Address address = new Address();
         address.setUrl(addressPOJO.getUrl());
         address.setUser(user);
@@ -45,7 +63,7 @@ public class AddressService {
         return address;
     }
 
-    private Address addAddressWithoutUser(AddressPOJO addressPOJO){
+    private Address addAddressWithoutUser(AddressPOJO addressPOJO) {
         Address address = new Address();
         address.setUrl(addressPOJO.getUrl());
         address.setExpDATE(expDate(30));
@@ -54,26 +72,11 @@ public class AddressService {
         return address;
     }
 
-
-    @Autowired
-    public AddressService(AddressRepository addressRepository, OwnUserDetailService ownUserDetailService) {
-        this.addressRepository = addressRepository;
-        this.ownUserDetailService = ownUserDetailService;
-    }
-
     public Address addAddress(AddressPOJO addressPOJO) {
-        try {
-            Optional<OwnUserDetails> ownUserDetails = Optional.ofNullable((OwnUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            if (ownUserDetails.isPresent()) {
-                User user = ownUserDetails.get().getUser();
-                return addAddressWithUser(addressPOJO, user);
-            } else {
-                return addAddressWithoutUser(addressPOJO);
-            }
+       if(loggedUser().isPresent())
+            return addAddressWithUser(addressPOJO, loggedUser().get());
 
-        }catch (ClassCastException e){
             return addAddressWithoutUser(addressPOJO);
-        }
     }
 
     public Address getURL(String shortURL) {
@@ -81,18 +84,16 @@ public class AddressService {
         int URLID = Integer.parseInt(shortURL, 16);
         System.out.println("Poszukiwany adres: " + URLID);
         Optional<Address> optionalAddress = addressRepository.findById(URLID);
-        if(optionalAddress.isPresent()){
+        if (optionalAddress.isPresent()) {
             System.out.println("Odnaleziono adres w bazie");
             Address address = optionalAddress.get();
-            if(address.isActive() && address.getExpDATE().compareTo(nowDATE())>0){
+            if (address.isActive() && address.getExpDATE().compareTo(nowDATE()) > 0) {
                 System.out.println("Aktywny, Nie wygasły");
                 return address;
-            }
-            else if(!address.isActive()){
+            } else if (!address.isActive()) {
                 System.out.println("Nie aktywny");
                 return null;
-            }
-            else {
+            } else {
                 System.out.println("Wygasły");
                 address.setActive(false);
                 addressRepository.save(address);
@@ -104,24 +105,31 @@ public class AddressService {
 
     }
 
-    public Iterable<Address> getAllActivesURLs(){
+    public Iterable<Address> getAllActivesURLs() {
         Iterable<Address> addresses = addressRepository.findAll();
         HashSet<Address> addresses1 = new HashSet<>();
-        for(Address address: addresses){
-            if(address.isActive() && address.getExpDATE().compareTo(nowDATE())<0){
+        for (Address address : addresses) {
+            if (address.isActive() && address.getExpDATE().compareTo(nowDATE()) < 0) {
                 addresses1.add(address);
-            }
-            else if (address.isActive()) {
-                    address.setActive(false);
-                    addressRepository.save(address);
+            } else if (address.isActive()) {
+                address.setActive(false);
+                addressRepository.save(address);
 
             }
         }
         return (addresses1);
     }
 
-    public Iterable<Address> getUserAddresses(User user){
+    public Iterable<Address> getUserAddresses(User user) {
         return addressRepository.findByUserID(user.getID());
+    }
+
+    public Iterable<Address> getUserAddresses() {
+        if(loggedUser().isPresent())
+            return addressRepository.findByUserID(loggedUser().get().getID());
+        else
+            return null;
+
     }
 
     public String deleteAddress(Integer id) {
@@ -130,7 +138,7 @@ public class AddressService {
             User user = ownUserDetails.get().getUser();
             Optional<Address> address = addressRepository.findById(id);
             System.out.println("User logged");
-            if(address.isPresent()) {
+            if (address.isPresent()) {
                 Address address1 = address.get();
                 if (address1.getUser() != null && address1.getUser().getUsername().equals(user.getUsername())) {
                     address1.setActive(false);
@@ -141,12 +149,10 @@ public class AddressService {
                     System.out.println("Wrong user");
                     return "You have no permissions to delete the element";
                 }
-            }
-            else {
+            } else {
                 return "No address";
             }
-        }
-        else {
+        } else {
             return "You are not logged";
         }
 

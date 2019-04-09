@@ -23,49 +23,49 @@ public class MainController {
         this.addressService = addressService;
     }
 
+    @PostMapping("/add")
+    @ResponseBody
+    public String addAddress(@ModelAttribute AddressPOJO address, Model model) {
+        String url = Integer.toHexString(addressService.addAddress(address).getUrlID());
+        url = "http://localhost:8080/cutter/" + url;
+        model.addAttribute("url", url);
+        return url;
 
-   /* @GetMapping("")
+        // todo
+        // create new method in addressService
+    }
+
+    @GetMapping("")
+    public String addAddress(Model model) {
+        model.addAttribute("Address", new AddressPOJO());
+        return "addURL";
+    }
+
+    @GetMapping("/{shortURL}")
+    public String getURL(@PathVariable String shortURL,
+                         Model model) {
+        Optional<Address> address = Optional.ofNullable(addressService.getURL(shortURL));
+        if (address.isPresent()) {
+            String a = address.get().getUrl();
+            model.addAttribute("address", a);
+            return "getURL";
+        } else
+            return "404";
+    }
+
+
+
+      /* @GetMapping("")
     @ResponseBody
     public Iterable<Address> getAllActivesURLs(){
         return addressService.getAllActivesURLs();
     }*/
 
-    @PostMapping("/add")
-    @ResponseBody
-    public String addAddress(@ModelAttribute AddressPOJO address, Model model) {
-
-        String url = Integer.toHexString(addressService.addAddress(address).getUrlID());
-        url = "http://localhost:8080/cutter/"+url;
-        model.addAttribute("url",url);
-
-        return url;
-
-    }
-
-    @GetMapping("")
-    public String addAddress(Model model){
-       model.addAttribute("Address",new AddressPOJO());
-       return "addURL";
-    }
-
-
-/*
+      /*
     @GetMapping("/{shortURL}")
     @ResponseBody
     public Address getURL(@PathVariable String shortURL) {
         return addressService.getURL(shortURL);
     }
 */
-
-    @GetMapping("/{shortURL}")
-    public String getURL(@PathVariable String shortURL,
-                         Model model) {
-
-        Optional<Address> address = Optional.ofNullable(addressService.getURL(shortURL));
-        if (address.isPresent()) {
-            String a = address.get().getUrl();
-            model.addAttribute("address", a);
-            return "getURL";
-        } else return "404";
-    }
 }

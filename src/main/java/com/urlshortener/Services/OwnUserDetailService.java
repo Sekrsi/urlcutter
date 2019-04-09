@@ -4,6 +4,7 @@ package com.urlshortener.Services;
 import com.urlshortener.Configs.OwnUserDetails;
 import com.urlshortener.Entities.User;
 import com.urlshortener.Repositories.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,7 +39,8 @@ public class OwnUserDetailService implements UserDetailsService {
             if(user == null) {
                 user = userRepository.findByUsername(username);
                 if (user == null) {
-                    throw new UsernameNotFoundException(username);
+                   // throw new UsernameNotFoundException(username);
+                    return null;
                 }
                 else {
                     return new OwnUserDetails(user);
@@ -50,7 +52,8 @@ public class OwnUserDetailService implements UserDetailsService {
 
             User user = userRepository.findByUsername(username);
             if (user == null) {
-                throw new UsernameNotFoundException(username);
+                //throw new UsernameNotFoundException(username);
+                return null;
             }
             return new OwnUserDetails(user);
 
