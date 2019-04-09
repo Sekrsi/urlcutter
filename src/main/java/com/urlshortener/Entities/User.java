@@ -17,7 +17,7 @@ public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY )
   @Column
-  private long ID;
+  protected long ID;
 
   @Column
   @NotBlank

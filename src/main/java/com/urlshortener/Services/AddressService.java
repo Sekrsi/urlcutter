@@ -45,10 +45,10 @@ public class AddressService {
         return cal.getTime();
     }
 
-    private Optional<User> loggedUser(){
+    private Optional<OwnUserDetails> loggedUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(!(auth instanceof AnonymousAuthenticationToken)){
-            return Optional.of((User)auth.getPrincipal());
+            return Optional.of((OwnUserDetails) auth.getPrincipal());
         } else
             return Optional.empty();
     }
@@ -74,7 +74,7 @@ public class AddressService {
 
     public Address addAddress(AddressPOJO addressPOJO) {
        if(loggedUser().isPresent())
-            return addAddressWithUser(addressPOJO, loggedUser().get());
+            return addAddressWithUser(addressPOJO, loggedUser().get().getUser());
 
             return addAddressWithoutUser(addressPOJO);
     }

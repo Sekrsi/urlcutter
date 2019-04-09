@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 
-public class OwnUserDetails extends User implements UserDetails {
+public class OwnUserDetails implements UserDetails {
     private User user;
 
 
