@@ -13,10 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AddressService {
@@ -53,9 +50,7 @@ public class AddressService {
             return Optional.empty();
     }
 
-    private Address addAddressWithUser(AddressPOJO addressPOJO, User user) {
-        Address address = new Address();
-        address.setUrl(addressPOJO.getUrl());
+    private Address addAddressWithUser(Address address, User user) {
         address.setUser(user);
         address.setExpDATE(expDate(180));
         address.setSetupDATE(nowDATE());
@@ -63,23 +58,21 @@ public class AddressService {
         return address;
     }
 
-    private Address addAddressWithoutUser(AddressPOJO addressPOJO) {
-        Address address = new Address();
-        address.setUrl(addressPOJO.getUrl());
+    private Address addAddressWithoutUser(Address address) {
         address.setExpDATE(expDate(30));
         address.setSetupDATE(nowDATE());
         address = addressRepository.save(address);
         return address;
     }
 
-    public Address addAddress(AddressPOJO addressPOJO) {
+    public Address addAddress(Address address) {
        if(loggedUser().isPresent())
-            return addAddressWithUser(addressPOJO, loggedUser().get().getUser());
+            return addAddressWithUser(address, loggedUser().get().getUser());
 
-            return addAddressWithoutUser(addressPOJO);
+            return addAddressWithoutUser(address);
     }
 
-    public Address getURL(String shortURL) {
+    public Address getAddress(String shortURL) {
 
         int URLID = Integer.parseInt(shortURL, 16);
         System.out.println("Poszukiwany adres: " + URLID);
@@ -126,11 +119,11 @@ public class AddressService {
 
     public Iterable<Address> getUserAddresses() {
         if(loggedUser().isPresent())
-            return addressRepository.findByUserID(loggedUser().get().getID());
-        else
-            return null;
-
+        return addressRepository.findByUserID(loggedUser().get().getID());
+        return null;
     }
+
+
 
     public String deleteAddress(Integer id) {
         Optional<OwnUserDetails> ownUserDetails = Optional.ofNullable((OwnUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
@@ -157,4 +150,5 @@ public class AddressService {
         }
 
     }
+
 }

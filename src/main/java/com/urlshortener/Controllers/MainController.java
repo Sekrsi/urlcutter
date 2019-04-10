@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Controller
 @CrossOrigin
-@RequestMapping("/cutter")
+@RequestMapping("/web")
 public class MainController {
 
     private final AddressService addressService;
@@ -24,15 +24,12 @@ public class MainController {
     }
 
     @PostMapping("/add")
-    @ResponseBody
-    public String addAddress(@ModelAttribute AddressPOJO address, Model model) {
+    public String addAddress(@ModelAttribute Address address, Model model) {
         String url = Integer.toHexString(addressService.addAddress(address).getUrlID());
-        url = "http://localhost:8080/cutter/" + url;
+        url = "http://localhost:8080/web/" + url;
         model.addAttribute("url", url);
-        return url;
+        return "url";
 
-        // todo
-        // create new method in addressService
     }
 
     @GetMapping("")
@@ -44,7 +41,7 @@ public class MainController {
     @GetMapping("/{shortURL}")
     public String getURL(@PathVariable String shortURL,
                          Model model) {
-        Optional<Address> address = Optional.ofNullable(addressService.getURL(shortURL));
+        Optional<Address> address = Optional.ofNullable(addressService.getAddress(shortURL));
         if (address.isPresent()) {
             String a = address.get().getUrl();
             model.addAttribute("address", a);
@@ -55,17 +52,5 @@ public class MainController {
 
 
 
-      /* @GetMapping("")
-    @ResponseBody
-    public Iterable<Address> getAllActivesURLs(){
-        return addressService.getAllActivesURLs();
-    }*/
 
-      /*
-    @GetMapping("/{shortURL}")
-    @ResponseBody
-    public Address getURL(@PathVariable String shortURL) {
-        return addressService.getURL(shortURL);
-    }
-*/
 }

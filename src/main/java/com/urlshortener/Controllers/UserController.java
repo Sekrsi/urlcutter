@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/addresses")
-    public Address addAddress(@RequestBody AddressPOJO address){
+    public Address addAddress(@RequestBody Address address){
         return addressService.addAddress(address);
     }
 
@@ -36,6 +36,7 @@ public class UserController {
 
     @PutMapping("/addresses")
     public Address updateAddress(@RequestBody Address address){
+
         return address;
     }
 
